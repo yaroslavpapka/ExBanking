@@ -1,4 +1,4 @@
-# Exbanking
+# ExBanking |> Yaroslav Papka
 
 **TODO: Add description**
 
