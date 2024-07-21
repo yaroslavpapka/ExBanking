@@ -119,7 +119,7 @@ defmodule ExBankingTest do
   end
 
   test "exceeding request limit with more than 10 requests" do
-    user = "test_user"
+    user = "Alvarez"
     currency = "USD"
     amount = 100
 
@@ -132,5 +132,33 @@ defmodule ExBankingTest do
     assert {:error, :too_many_requests_to_user} = ExBanking.deposit(user, amount, currency)
     assert {:error, :too_many_requests_to_user} = ExBanking.withdraw(user, amount, currency)
     assert {:error, :too_many_requests_to_user} = ExBanking.get_balance(user, currency)
+  end
+
+  test "10 deposits without a problem" do
+    user = "Totti"
+    currency = "USD"
+    ExBanking.create_user(user)
+
+    result =
+      Enum.reduce(1..100, [], fn ammount, acc -> [Task.async(fn -> ExBanking.deposit(user, ammount, currency) end) | acc] end)
+      |> Enum.map(&Task.await/1)
+      |> Enum.reverse()
+      |> Enum.count(fn {res, _} -> res == :ok end)
+
+    assert(result == 10)
+  end
+
+  test "return error with more than 10 requests" do
+    user = "Rivaldo"
+    currency = "USD"
+    ExBanking.create_user(user)
+
+    result =
+      Enum.reduce(1..100, [], fn x, acc -> [Task.async(fn -> ExBanking.deposit(user, x, currency) end) | acc] end)
+      |> Enum.map(&Task.await/1)
+      |> Enum.reverse()
+      |> Enum.count(fn {res, _} -> res == :error end)
+
+    assert(result == 90)
   end
 end

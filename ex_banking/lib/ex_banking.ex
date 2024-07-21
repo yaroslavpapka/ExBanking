@@ -110,6 +110,7 @@ defmodule ExBanking do
   @doc """
   Starts a new instance of the `GenServer` with the given initial state.
   """
+  @spec start_link(any()) :: {:ok, pid()}
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -120,6 +121,7 @@ defmodule ExBanking do
   The `init/1` function is called when the `GenServer` is started. It sets the initial state of the `GenServer` to the value provided as an argument.
   This function is required to return `{:ok, state}` where `state` is the initial state of the server.
   """
+  @spec init(any()) :: {:ok, any()}
   def init(state) do
     {:ok, state}
   end
@@ -238,19 +240,21 @@ defmodule ExBanking do
     Map.update!(user_data, "requests", &(&1 - 1))
   end
 
+  @spec update_balance(map(), number(), String.t()) :: map()
   defp update_balance(user_data, amount, currency) do
     current_balance = Map.get(user_data, currency, 0.0)
     Map.put(user_data, currency, current_balance + rond(amount))
   end
 
+  @spec check_balance(map(), number(), String.t()) :: :ok | {:error, :not_enough_money}
   defp check_balance(user_data, amount, currency) do
-    if Map.get(user_data, currency, 0.0) >= amount do
-      :ok
-    else
-      {:error, :not_enough_money}
+    case Map.get(user_data, currency, 0.0) do
+      balance when balance >= amount -> :ok
+      _ -> {:error, :not_enough_money}
     end
   end
 
+  @spec get_user_data(map(), any()) :: {:ok, map()} | {:error, :user_does_not_exist}
   defp get_user_data(state, user) do
     case Map.get(state, user) do
       nil -> {:error, :user_does_not_exist}
@@ -258,18 +262,22 @@ defmodule ExBanking do
     end
   end
 
+  @spec check_requests(map()) :: :ok | {:error, :too_many_requests_to_user}
   defp check_requests(%{"requests" => requests}) when requests >= @max_requests do
     {:error, :too_many_requests_to_user}
   end
 
+  @spec check_requests(map()) :: :ok | {:error, :too_many_requests_to_user}
   defp check_requests(_) do
     :ok
   end
 
+  @spec increment_requests(map()) :: map()
   defp increment_requests(user_data) do
     Map.update!(user_data, "requests", &(&1 + 1))
   end
 
+  @spec rond(number()) :: number()
   defp rond(amount) do
     Float.round(amount * 1.0, 2)
   end
