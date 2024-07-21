@@ -2,8 +2,9 @@ name: Elixir CI
 
 on:
   push:
-    paths:
-      - '**/ex_banking/**'
+    branches:
+      - main
+      - master
 
 permissions:
   contents: read
