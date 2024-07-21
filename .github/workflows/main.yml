@@ -2,9 +2,8 @@ name: Elixir CI
 
 on:
   push:
-    branches:
-      - main
-      - master
+    paths:
+      - '**/ex_banking/**'
 
 permissions:
   contents: read
@@ -25,8 +24,8 @@ jobs:
       - name: Restore dependencies cache
         uses: actions/cache@v3
         with:
-          path: '${{ env.BRANCH_NAME }}/labs/deps'
-          key: ${{ runner.os }}-mix-${{ hashFiles('${{ env.BRANCH_NAME }}/labs/**/mix.lock') }}
+          path: '${{ env.BRANCH_NAME }}/ex_banking/deps'
+          key: ${{ runner.os }}-mix-${{ hashFiles('${{ env.BRANCH_NAME }}/ex_banking/**/mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
       - name: Install dependencies
         run: mix deps.get
