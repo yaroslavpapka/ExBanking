@@ -25,6 +25,6 @@ jobs:
       - name: Change directory
         run: cd ex_banking
       - name: Install dependencies
-        run: mix deps.get
+        run:  ls -la
       - name: Run tests
         run: mix test
