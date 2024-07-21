@@ -22,12 +22,6 @@ jobs:
         with:
           elixir-version: '1.16.0' # [Required] Define the Elixir version
           otp-version: '26.2.1'      # [Required] Define the Erlang/OTP
-      - name: Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: ExBanking/ex_banking/'
-          key: ${{ runner.os }}-mix-${{ hashFiles('ExBanking/ex_banking/**/mix.exs') }}
-          restore-keys: ${{ runner.os }}-mix-
       - name: Run tests
         run: mix test
         working-directory: ExBanking/ex_banking
