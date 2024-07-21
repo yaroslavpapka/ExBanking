@@ -24,4 +24,4 @@ jobs:
           otp-version: '26.2.1'      # [Required] Define the Erlang/OTP
       - name: Run tests
         run: mix test
-        working-directory: ExBanking/ex_banking
+        working-directory: /ex_banking
