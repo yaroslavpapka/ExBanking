@@ -151,7 +151,7 @@ defmodule ExBanking do
 
       updated_state = Map.put(state, user, updated_user_data)
 
-      {:reply, {:ok, updated_user_data[currency]}, updated_state}
+      {:reply, {:ok, updated_user_data[currency]}, updated_state |> decrement_requests(user) }
     else
       {:error, reason} -> {:reply, {:error, reason}, state}
     end
@@ -169,7 +169,7 @@ defmodule ExBanking do
 
       updated_state = Map.put(state, user, updated_user_data)
 
-      {:reply, {:ok, updated_user_data[currency]}, updated_state}
+      {:reply, {:ok, updated_user_data[currency]}, updated_state |> decrement_requests(user) }
     else
       {:error, reason} -> {:reply, {:error, reason}, state}
     end
@@ -182,7 +182,7 @@ defmodule ExBanking do
       updated_user_data = increment_requests(user_data)
       updated_state = Map.put(state, user, updated_user_data)
 
-      {:reply, {:ok, Map.get(user_data, currency, 0.0)}, updated_state}
+      {:reply, {:ok, Map.get(user_data, currency, 0.0)}, updated_state |> decrement_requests(user)}
     else
       {:error, reason} -> {:reply, {:error, reason}, state}
     end
@@ -215,29 +215,19 @@ defmodule ExBanking do
             |> Map.put(from_user, updated_from_user_data)
             |> Map.put(to_user, updated_to_user_data)
 
-          {:reply, {:ok, updated_from_user_data[currency], updated_to_user_data[currency]}, updated_state}
+          {:reply, {:ok, updated_from_user_data[currency], updated_to_user_data[currency]}, updated_state }
         else
           {:error, reason} -> {:reply, {:error, reason}, state}
         end
     end
   end
 
-  @spec handle_info({:decrement_requests, any()}, map()) :: {:noreply, map()}
-  def handle_info({:decrement_requests, user}, state) do
-    case Map.fetch(state, user) do
-      {:ok, user_data} ->
-        updated_user_data = decrement_requests(user_data)
-        updated_state = Map.put(state, user, updated_user_data)
-        {:noreply, updated_state}
-
-      :error ->
-        {:noreply, state}
-    end
-  end
-
-  @spec decrement_requests(map()) :: map()
-  defp decrement_requests(user_data) do
-    Map.update!(user_data, "requests", &(&1 - 1))
+  @spec decrement_requests(map(), any()) :: map()
+  defp decrement_requests(state, user) do
+    user_data = Map.get(state, user)
+    updated_requests = max(user_data["requests"] - 1, 0)
+    updated_user_data = Map.put(user_data, "requests", updated_requests)
+    Map.put(state, user, updated_user_data)
   end
 
   @spec update_balance(map(), number(), String.t()) :: map()
