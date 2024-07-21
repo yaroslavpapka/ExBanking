@@ -25,12 +25,12 @@ jobs:
       - name: Restore dependencies cache
         uses: actions/cache@v3
         with:
-          path: '${{ env.BRANCH_NAME }}/ex_banking/'
+          path: '${{ env.BRANCH_NAME }}/ExBanking/ex_banking/'
           key: ${{ runner.os }}-mix-${{ hashFiles('${{ env.BRANCH_NAME }}/ex_banking/**/mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
       - name: Install dependencies
         run: mix deps.get
-        working-directory: main/ex_banking'
+        working-directory: main/ExBanking/ex_banking'
       - name: Run tests
         run: mix test
-        working-directory: main/ex_banking'
+        working-directory: main/ExBanking/ex_banking'
