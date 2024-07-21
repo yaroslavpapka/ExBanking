@@ -24,5 +24,7 @@ jobs:
           otp-version: '26.2.1'    # [Required] Define the Erlang/OTP version
       - name: Change directory
         run: cd ex_banking
+      - name: Install dependencies
+        run: mix deps.get
       - name: Run tests
         run: mix test
