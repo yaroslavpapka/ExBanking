@@ -56,7 +56,7 @@ defmodule ExBanking do
   {:ok, 10.25}
   """
   @spec withdraw(user :: String.t(), amount :: number(), currency :: String.t()) :: {:ok, new_balance :: number()} | {:error, :wrong_arguments | :user_does_not_exist | :not_enough_money | :too_many_requests_to_user}
-  def withdraw(user, amount, currency) when is_binary(user) and is_number(amount) and is_binary(currency) do
+  def withdraw(user, amount, currency) when is_binary(user) and is_number(amount) and amount > 0 and is_binary(currency) do
     GenServer.call(__MODULE__, {:withdraw, user, amount, currency})
   end
 
@@ -100,7 +100,7 @@ defmodule ExBanking do
   {:error, :not_enough_money}
   """
   @spec send(from_user :: String.t(), to_user :: String.t(), amount :: number(), currency :: String.t()) :: {:ok, from_user_balance :: number(), to_user_balance :: number()} | {:error, :wrong_arguments | :not_enough_money | :sender_does_not_exist | :receiver_does_not_exist | :too_many_requests_to_sender | :too_many_requests_to_receiver}
-  def send(from_user, to_user, amount, currency) when is_binary(from_user) and is_binary(to_user) and is_number(amount) and is_binary(currency) do
+  def send(from_user, to_user, amount, currency) when is_binary(from_user) and is_binary(to_user) and amount > 0 and is_number(amount) and is_binary(currency) do
     GenServer.call(__MODULE__, {:send, from_user, to_user, amount, currency})
   end
 
