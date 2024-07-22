@@ -35,7 +35,7 @@ defmodule ExBanking do
   {:error, :user_does_not_exist}
   """
   @spec deposit(user :: String.t(), amount :: number(), currency :: String.t()) :: {:ok, new_balance :: number()} | {:error, :wrong_arguments | :user_does_not_exist | :too_many_requests_to_user}
-  def deposit(user, amount, currency) when is_binary(user) and is_number(amount) and is_binary(currency) do
+  def deposit(user, amount, currency) when is_binary(user) and is_number(amount) and amount > 0 and is_binary(currency) do
     GenServer.call(__MODULE__, {:deposit, user, amount, currency})
   end
 
