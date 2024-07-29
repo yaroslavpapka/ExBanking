@@ -19,6 +19,8 @@ defmodule ExBanking.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:benchee, "~> 1.0", only: [:dev, :test], runtime: false}
+    ]
   end
 end
